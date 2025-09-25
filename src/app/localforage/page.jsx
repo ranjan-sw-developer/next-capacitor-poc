@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { syncNotes } from "@/src/utils/localForageService";
 import { toast } from "react-toastify";
 import { Network } from "@capacitor/network";
+import DexieAndSqlite from "@/src/components/DexieAndSqlite";
 
 export default function LocalForagePage() {
   const [isOnline, setIsOnline] = useState(false);
@@ -48,8 +49,9 @@ export default function LocalForagePage() {
             ⬅ Back Home
           </button>
         </Link>
-        <h2 className="text-xl font-bold mb-4 mt-8">Local Forage Demo</h2>
-        <LocalForage isOnline={isOnline} />
+        <h2 className="text-xl font-bold mb-4 mt-8">Offline Sync Demo</h2>
+        {/* <LocalForage isOnline={isOnline} /> */}
+        <DexieAndSqlite isOnline={isOnline} />
       </div>
     </div>
   );

@@ -1,10 +1,8 @@
-"use client";
-
 import Header from "@/src/components/Header";
-import InAppBrowserSection from "../../components/InAppBrowser";
 import Link from "next/link";
+import PrefetchSection from "@/src/components/PrefetchSection";
 
-export default function InAppBrowserPage() {
+export default function Prefetch() {
   return (
     <div>
       <Header />
@@ -14,8 +12,8 @@ export default function InAppBrowserPage() {
             ⬅ Back Home
           </button>
         </Link>
-        <h2 className="text-xl font-bold mb-4 mt-8">Camcom Demo</h2>
-        <InAppBrowserSection />
+        <h2 className="text-xl font-bold mb-4 mt-8">Prefetch Demo</h2>
+        <PrefetchSection />
       </div>
     </div>
   );

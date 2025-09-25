@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Camera, CameraResultType } from "@capacitor/camera";
+import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 
 const CameraSection = () => {
   const [photo, setPhoto] = useState(null);
@@ -13,6 +13,7 @@ const CameraSection = () => {
       const image = await Camera.getPhoto({
         quality: 90,
         resultType: CameraResultType.DataUrl,
+        // source: CameraSource.Prompt,
       });
       setPhoto(image.dataUrl);
     } catch (err) {

@@ -3,6 +3,7 @@
 import Header from "@/src/components/Header";
 import CameraSection from "../../components/CameraSection";
 import Link from "next/link";
+import WebCamera from "@/src/components/WebCamera";
 
 export default function CameraPage() {
   return (
@@ -16,6 +17,7 @@ export default function CameraPage() {
         </Link>
         <h2 className="text-xl font-bold mb-4 mt-8">Camera Demo</h2>
         <CameraSection />
+        {/* <WebCamera /> */}
       </div>
     </div>
   );
