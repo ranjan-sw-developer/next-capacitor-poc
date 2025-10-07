@@ -20,6 +20,7 @@
     "@capacitor/ios": "^7.4.3",
     "@capacitor/local-notifications": "^7.0.3",
     "@capacitor/network": "^7.0.2",
+    "@jackobo/capacitor-webview": "^7.0.0",
     "@reduxjs/toolkit": "^2.9.0",
     "dexie": "^4.2.0",
     "localforage": "^1.10.0",

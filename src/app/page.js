@@ -61,6 +61,12 @@ export default function Home() {
         >
           Prefetch Demo
         </button>
+
+        <Link href="/videoPlayer">
+          <button className="w-full bg-white rounded-xl p-4 shadow hover:shadow-lg transition cursor-pointer">
+            Video/Image/PDF Viewer Page
+          </button>
+        </Link>
       </div>
     </div>
   );
