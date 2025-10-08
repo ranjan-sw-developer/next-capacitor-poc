@@ -67,6 +67,12 @@ export default function Home() {
             Video/Image/PDF Viewer Page
           </button>
         </Link>
+
+        <Link href="/carModel">
+          <button className="w-full bg-white rounded-xl p-4 shadow hover:shadow-lg transition cursor-pointer">
+            3D Car Model
+          </button>
+        </Link>
       </div>
     </div>
   );
