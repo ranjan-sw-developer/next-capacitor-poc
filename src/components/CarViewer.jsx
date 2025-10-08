@@ -2,57 +2,62 @@
 
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { useEffect, useRef, Suspense } from "react";
+import { useEffect, useRef, Suspense, useMemo } from "react";
 import * as THREE from "three";
 
 function CarModel({ url }) {
   const { scene } = useGLTF(url);
   const { camera } = useThree();
-  const modelRef = useRef();
   const initializedRef = useRef(false);
 
-  useEffect(() => {
-    if (!scene || initializedRef.current) return;
+  // Clone and prepare the model immediately using useMemo
+  const model = useMemo(() => {
+    if (!scene) return null;
 
-    // Clone the scene to avoid mutating the cached version
-    const model = scene.clone();
-    modelRef.current = model;
+    const clonedModel = scene.clone();
 
     // Calculate bounding box
-    const box = new THREE.Box3().setFromObject(model);
+    const box = new THREE.Box3().setFromObject(clonedModel);
     const center = box.getCenter(new THREE.Vector3());
     const size = box.getSize(new THREE.Vector3());
 
     // Center the model
-    model.position.x = -center.x;
-    model.position.y = -center.y;
-    model.position.z = -center.z;
+    clonedModel.position.x = -center.x;
+    clonedModel.position.y = -center.y;
+    clonedModel.position.z = -center.z;
 
-    // Scale to fit in view (adjust targetSize to make models bigger/smaller)
+    // Scale to fit in view
     const maxDim = Math.max(size.x, size.y, size.z);
-    const targetSize = 8; // Adjust this value (higher = bigger model)
+    const targetSize = 15;
     const scale = targetSize / maxDim;
-    model.scale.setScalar(scale);
+    clonedModel.scale.setScalar(scale);
 
-    // Position camera to view the model properly
-    const distance = maxDim * 1.5; // Adjust multiplier for zoom level
-    camera.position.set(distance, distance * 0.5, distance);
-    camera.lookAt(0, 0, 0);
+    return clonedModel;
+  }, [scene]);
 
-    initializedRef.current = true;
-  }, [scene, camera]);
+  useEffect(() => {
+    if (!initializedRef.current && model) {
+      // Calculate bounding box for camera positioning
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+
+      // Position camera to view the model properly
+      const distance = maxDim * 1.5;
+      camera.position.set(distance, distance * 0.5, distance);
+      camera.lookAt(0, 0, 0);
+      camera.updateProjectionMatrix();
+
+      initializedRef.current = true;
+    }
+  }, [model, camera]);
 
   // Reset initialization flag when URL changes
   useEffect(() => {
     initializedRef.current = false;
   }, [url]);
 
-  return modelRef.current ? <primitive object={modelRef.current} /> : null;
-}
-
-// Preload models
-function preloadModel(url) {
-  useGLTF.preload(url);
+  return model ? <primitive object={model} /> : null;
 }
 
 function LoadingSpinner() {
@@ -130,7 +135,6 @@ function ClickHandler({ onPartClick }) {
     function enhancePartName(baseName, position, fullName) {
       const x = position.x;
       const z = position.z;
-      const y = position.y;
 
       // Determine left/right (x-axis: negative = left, positive = right)
       const side = x < -0.5 ? "Left" : x > 0.5 ? "Right" : "";
@@ -193,6 +197,3 @@ export default function CarViewer({ carType, onPartClick }) {
     </Canvas>
   );
 }
-
-// Export preload function for use in parent component
-export { preloadModel };
