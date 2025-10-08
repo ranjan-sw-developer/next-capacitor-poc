@@ -71,6 +71,7 @@ function LoadingSpinner() {
 
 function ClickHandler({ onPartClick }) {
   const { camera, scene, gl } = useThree();
+  const markersRef = useRef([]);
 
   useEffect(() => {
     const raycaster = new THREE.Raycaster();
@@ -108,9 +109,18 @@ function ClickHandler({ onPartClick }) {
         const part = intersects[0].object;
         const fullName = part.name.toLowerCase();
 
-        // Get the world position of the clicked part
-        const worldPos = new THREE.Vector3();
-        part.getWorldPosition(worldPos);
+        // Get the intersection point (where user clicked)
+        const clickPoint = intersects[0].point;
+
+        // Create a red sphere at the click point
+        const sphereGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+        const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const marker = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        marker.position.copy(clickPoint);
+        scene.add(marker);
+
+        // Store marker reference
+        markersRef.current.push(marker);
 
         let friendlyName = "Car Part";
         let basePartName = null;
@@ -125,7 +135,7 @@ function ClickHandler({ onPartClick }) {
 
         // Enhance with positional info for certain parts
         if (basePartName) {
-          friendlyName = enhancePartName(basePartName, worldPos, fullName);
+          friendlyName = enhancePartName(basePartName, clickPoint, fullName);
         }
 
         onPartClick(friendlyName);
@@ -172,7 +182,16 @@ function ClickHandler({ onPartClick }) {
     }
 
     gl.domElement.addEventListener("click", onClick);
-    return () => gl.domElement.removeEventListener("click", onClick);
+    return () => {
+      gl.domElement.removeEventListener("click", onClick);
+      // Clean up markers when component unmounts
+      markersRef.current.forEach((marker) => {
+        scene.remove(marker);
+        marker.geometry.dispose();
+        marker.material.dispose();
+      });
+      markersRef.current = [];
+    };
   }, [camera, scene, gl, onPartClick]);
 
   return null;
